@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body {
-      margin: 0;
-    }
+    * { margin:0; padding:0; } /* to remove the top and left whitespace */
+
+    html, body { width:100%; height:100%; } /* just to be sure these are full screen*/
+
+    canvas { display:block; } /* To remove the scrollbars */
   </style>
   <title>Game of life</title>
 </head>
 <body>
-  <canvas id="c" height="1000px" width="1000px"></canvas>
+  <canvas id="c"></canvas>
 
 
   <script>
     var CELL_SIZE = 10;
-    var HEIGHT = 100;
-    var WIDTH = 100;
-    var CELL_COUNT = HEIGHT * WIDTH;
+    var HEIGHT = null;
+    var WIDTH = null;
+    var CELL_COUNT = null;
     var canvas = document.getElementById("c");
     var context = canvas.getContext('2d');
     var cells = [];
@@ -26,11 +28,12 @@
     var running = false;
 
     function init() {
-      cells[2020] = 1;
-      cells[2121] = 1;
-      cells[2219] = 1;
-      cells[2220] = 1;
-      cells[2221] = 1;
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+
+      HEIGHT = Math.floor(canvas.height / CELL_SIZE);
+      WIDTH = Math.floor(canvas.width / CELL_SIZE);
+      CELL_COUNT = HEIGHT * WIDTH;
     }
 
     function paint() {
@@ -86,7 +89,7 @@
     }
 
     function clear() {
-      context.clearRect(0, 0, 1000, 1000);
+      context.clearRect(0, 0, window.innerWidth, window.innerHeight);
     }
 
     function animate() {
