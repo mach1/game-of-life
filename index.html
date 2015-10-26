@@ -2,10 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <style>
+    body {
+      margin: 0;
+    }
+  </style>
   <title>Game of life</title>
 </head>
 <body>
   <canvas id="c" height="1000px" width="1000px"></canvas>
+
 
   <script>
     var CELL_SIZE = 10;
@@ -79,11 +85,15 @@
       }
     }
 
+    function clear() {
+      context.clearRect(0, 0, 1000, 1000);
+    }
+
     function animate() {
       var currentTime = new Date().getTime();
 
       if ((currentTime - timeOfLastFrame) >= (1000 / 3) && running) {
-        context.clearRect(0, 0, 1000, 1000);
+        clear();
         paint();
         tick();
         timeOfLastFrame = new Date().getTime();
@@ -98,6 +108,15 @@
         running = !running;
       }
 
+    });
+
+    canvas.addEventListener("click", function(e) {
+      var row = Math.floor(e.clientY / CELL_SIZE);
+      var col = Math.floor(e.clientX / CELL_SIZE);
+      cellLocation = (row * WIDTH) + col;
+      cells[cellLocation] = cells[cellLocation] ? 0 : 1;
+      clear();
+      paint();
     });
 
     init();
