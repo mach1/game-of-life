@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game of life</title>
+</head>
+<body>
+  <canvas id="c" height="1000px" width="1000px"></canvas>
+
+  <script>
+    var CELL_SIZE = 10;
+    var HEIGHT = 100;
+    var WIDTH = 100;
+    var CELL_COUNT = HEIGHT * WIDTH;
+    var canvas = document.getElementById("c");
+    var context = canvas.getContext('2d');
+    var cells = [];
+    var neighborMap = [];
+    var timeOfLastFrame = new Date().getTime();
+    var running = false;
+
+    function init() {
+      cells[2020] = 1;
+      cells[2121] = 1;
+      cells[2219] = 1;
+      cells[2220] = 1;
+      cells[2221] = 1;
+    }
+
+    function paint() {
+      for(var i = 0; i < CELL_COUNT; i++) {
+        if (cells[i] === 1) {
+          var x = i % WIDTH;
+          var y = (i - (i % WIDTH)) / WIDTH;
+          context.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        }
+      }
+    }
+
+    function getNeighborLocations(i) {
+      var topLeft = i - WIDTH - 1;
+      var topMiddle = i - WIDTH;
+      var topRight = i - WIDTH + 1;
+      var middleLeft = i - 1;
+      var middleRight = i + 1;
+      var bottomLeft = i + WIDTH - 1;
+      var bottomMiddle = i + WIDTH;
+      var bottomRight = i + WIDTH + 1;
+      var neighbors = [topLeft, topMiddle, topRight, middleLeft, middleRight, bottomLeft, bottomMiddle, bottomRight];
+      return neighbors;
+    }
+
+    function tick() {
+      neighborMap = [];
+      for(var i = 0; i < CELL_COUNT; i++) {
+        if (cells[i] === 1) {
+          // Increase neightbor count in neightbor map
+          var neighbors = getNeighborLocations(i);
+          for(var j = 0; j < neighbors.length; j++) {
+            var cellLocation = neighbors[j];
+            neighborMap[cellLocation] = neighborMap[cellLocation] ? neighborMap[cellLocation] + 1 : 1;
+          }
+        }
+      }
+
+      for(var i = 0; i < CELL_COUNT; i++) {
+        if (neighborMap[i] < 2) {
+          cells[i] = 0;
+        }
+        else if (neighborMap[i] === 3 && !cells[i]) {
+          cells[i] = 1;
+        }
+        else if ((neighborMap[i] >= 2 && neighborMap[i] <= 3) && cells[i] === 1) {
+          cells[i] = 1;
+        }
+        else {
+          cells[i] = 0;
+        }
+      }
+    }
+
+    function animate() {
+      var currentTime = new Date().getTime();
+
+      if ((currentTime - timeOfLastFrame) >= (1000 / 3) && running) {
+        context.clearRect(0, 0, 1000, 1000);
+        paint();
+        tick();
+        timeOfLastFrame = new Date().getTime();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    document.addEventListener("keypress", function(e) {
+      
+      if (e.keyCode === 32) {
+        e.preventDefault();
+        running = !running;
+      }
+
+    });
+
+    init();
+    paint();
+    animate();
+
+  </script>
+</body>
+</html>
