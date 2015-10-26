@@ -58,6 +58,24 @@
       }
     }
 
+    function paintGrid() {
+      context.strokeStyle = '#ddd';
+
+      for(var i = 0; i < WIDTH; i++) {
+        context.beginPath();
+        context.moveTo(i * 10, 0);
+        context.lineTo(i * 10, canvas.height);
+        context.stroke();
+      }
+
+      for(var j = 0; j < HEIGHT; j++) {
+        context.beginPath();
+        context.moveTo(0, j * 10);
+        context.lineTo(canvas.width, j * 10);
+        context.stroke();
+      }
+    }
+
     function getNeighborLocations(i) {
       var topLeft = i - WIDTH - 1;
       var topMiddle = i - WIDTH;
@@ -109,20 +127,21 @@
 
       if ((currentTime - timeOfLastFrame) >= (1000 / 3) && running) {
         clear();
-        paint();
         tick();
+        paint();
         timeOfLastFrame = new Date().getTime();
       }
       requestAnimationFrame(animate);
     }
 
     document.addEventListener("keypress", function(e) {
-      
       if (e.keyCode === 32) {
         e.preventDefault();
         running = !running;
+        if (!running) {
+          paintGrid();
+        }
       }
-
     });
 
     canvas.addEventListener("click", function(e) {
@@ -132,11 +151,15 @@
       cells[cellLocation] = cells[cellLocation] ? 0 : 1;
       clear();
       paint();
+      if (!running) {
+        paintGrid();
+      }
     });
 
     init();
-    paint();
+    paintGrid();
     animate();
+
 
   </script>
 </body>
